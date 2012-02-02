@@ -1,5 +1,5 @@
 require "hyperspec/version"
 
-module Hyperspec
+module HyperSpec
 
 end

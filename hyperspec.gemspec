@@ -4,7 +4,7 @@ require "hyperspec/version"
 
 Gem::Specification.new do |s|
   s.name        = "hyperspec"
-  s.version     = Hyperspec::VERSION
+  s.version     = HyperSpec::VERSION
   s.authors     = [ "Hannes Tydén" ]
   s.email       = [ "hannes@soundcloud.com" ]
   s.homepage    = "http://github.com/hannestyden/hyperspec"
