@@ -23,10 +23,15 @@ Gem::Specification.new do |s|
 
   dependencies =
     [
-      [ "minitest", "~> 2.11" ]
+      [ "minitest", "~> 2.11" ],
     ]
 
-  developement_dependencies = []
+  developement_dependencies =
+    [
+      [ "vcr",     "~> 1.6" ],
+      [ "webmock" ],
+    ]
+
   runtime_dependencies      = []
 
   (dependencies + developement_dependencies).each do |dependency|

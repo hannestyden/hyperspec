@@ -1,0 +1,94 @@
+---
+- !ruby/struct:VCR::HTTPInteraction
+  request: !ruby/struct:VCR::Request
+    method: :get
+    uri: http://localhost:80/
+    headers:
+    body:
+  response: !ruby/struct:VCR::Response
+    http_version: "1.1"
+    status: !ruby/struct:VCR::ResponseStatus
+      code: 200
+      message: OK
+    headers:
+      content-length:
+      - "22"
+      content-type:
+      - application/json;charset=utf-8
+    body: |+
+      {"is-this-json":true}
+
+- !ruby/struct:VCR::HTTPInteraction
+  request: !ruby/struct:VCR::Request
+    method: :head
+    uri: http://localhost:80/
+    headers:
+    body:
+  response: !ruby/struct:VCR::Response
+    http_version: "1.1"
+    status: !ruby/struct:VCR::ResponseStatus
+      code: 200
+      message: OK
+    headers:
+      content-length:
+      - "22"
+      content-type:
+      - application/json;charset=utf-8
+    body:
+- !ruby/struct:VCR::HTTPInteraction
+  request: !ruby/struct:VCR::Request
+    method: :post
+    uri: http://localhost:80/
+    headers:
+    body:
+  response: !ruby/struct:VCR::Response
+    http_version: "1.1"
+    status: !ruby/struct:VCR::ResponseStatus
+      code: 200
+      message: OK
+    headers:
+      content-length:
+      - "22"
+      content-type:
+      - application/json;charset=utf-8
+    body: |+
+      {"is-this-json":true}
+
+- !ruby/struct:VCR::HTTPInteraction
+  request: !ruby/struct:VCR::Request
+    method: :put
+    uri: http://localhost:80/
+    headers:
+    body:
+  response: !ruby/struct:VCR::Response
+    http_version: "1.1"
+    status: !ruby/struct:VCR::ResponseStatus
+      code: 200
+      message: OK
+    headers:
+      content-length:
+      - "22"
+      content-type:
+      - application/json;charset=utf-8
+    body: |+
+      {"is-this-json":true}
+
+- !ruby/struct:VCR::HTTPInteraction
+  request: !ruby/struct:VCR::Request
+    method: :delete
+    uri: http://localhost:80/
+    headers:
+    body:
+  response: !ruby/struct:VCR::Response
+    http_version: "1.1"
+    status: !ruby/struct:VCR::ResponseStatus
+      code: 200
+      message: OK
+    headers:
+      content-length:
+      - "22"
+      content-type:
+      - application/json;charset=utf-8
+    body: |+
+      {"is-this-json":true}
+
