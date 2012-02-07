@@ -38,7 +38,7 @@ Gem::Specification.new do |s|
     s.add_development_dependency *dependency
   end
 
-  (dependencies + developement_dependencies).each do |dependency|
+  (dependencies + runtime_dependencies).each do |dependency|
     s.add_runtime_dependency *dependency
   end
 end
