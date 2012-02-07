@@ -104,8 +104,15 @@ Allows for comparing against named status code symbols.
 - Efficient ways of building up and verifying precondition state.
 - Verify an eventual consistent state.
 - Allowing whitebox testing by "wormholing" into the application(s).
-- How to test a testing library? #meta
 
 ## Acknowledgments
 
 Thanks to Daniel Bornkessel for inspiring me to do README driven development.
+
+## History
+
+### 2012 02 07
+
+#### 0.0.1
+
+- Initial release
