@@ -6,6 +6,7 @@ require 'minitest/autorun'
 
 require 'vcr'
 require './spec/support/vcr'
+require './spec/support/meta_spec'
 
 $:.push File.expand_path("../../lib", __FILE__)
 require 'hyperspec'
@@ -16,6 +17,8 @@ VCR.config do |c|
 end
 
 describe HyperSpec do
+  include MetaSpec
+
   use_vcr_cassette('localhost')
 
   it "should be of version 0.0.0" do
@@ -41,13 +44,11 @@ describe HyperSpec do
       # returns a sub class of MiniTest::Spec which can be tested,
       # though this time we must tap into the `service` and bind it.
       subject do
-        this = nil
-
-        service("http://lolc.at") do
-          this = resource("/lolz") {}
+        the_spec do |bound|
+          service("http://lolc.at") do
+            bound.value = resource("/lolz") {}
+          end
         end
-
-        this.new("This is the name.")
       end
 
       it { subject.must_be_kind_of MiniTest::Spec }
@@ -56,20 +57,15 @@ describe HyperSpec do
     end
 
     describe "with_headers" do
-      # `resource` is added to `Kernel`, but conveniently enough
-      # returns a sub class of MiniTest::Spec which can be tested,
-      # though this time we must tap into the `service` and bind it.
       subject do
-        this = nil
-
-        service("http://localhost") do
-          this =
-            resource("/lolz") do
-              with_headers({ 'X-Camel-Size' => 'LARGE' })
-            end
+        the_spec do |bound|
+          service("http://localhost") do
+            bound.value =
+              resource("/lolz") do
+                with_headers({ 'X-Camel-Size' => 'LARGE' })
+              end
+          end
         end
-
-        this.new("This is the name.")
       end
 
       it { subject.must_be_kind_of MiniTest::Spec }
@@ -80,15 +76,13 @@ describe HyperSpec do
     %w[ get head post put delete ].map(&:to_sym).each do |http_method|
       describe "HTTP method selection" do
         subject do
-          this = nil
-
-          service("http://localhost") do
-            resource("/") do
-              this = send(http_method) {}
+          the_spec do |bound|
+            service("http://localhost") do
+              resource("/") do
+                bound.value = send(http_method) {}
+              end
             end
           end
-
-          this.new("This is the name.")
         end
 
         it { subject.request_type.must_equal http_method }
@@ -97,15 +91,13 @@ describe HyperSpec do
 
     describe "response" do
       subject do
-        this = nil
-
-        service("http://localhost") do
-          resource("/") do
-            this = get {}
+        the_spec do |bound|
+          service("http://localhost") do
+            resource("/") do
+              bound.value = get {}
+            end
           end
-        end
-
-        this.new("This is the name.").response
+        end.response
       end
 
       it { subject.status_code.must_be_kind_of Integer }
@@ -148,15 +140,13 @@ describe HyperSpec do
 
     describe "responds_with" do
       subject do
-        this = nil
-
-        service("http://localhost") do
-          resource("/") do
-            this = get {}
+        the_spec do |bound|
+          service("http://localhost") do
+            resource("/") do
+              bound.value = get {}
+            end
           end
-        end
-
-        this.new("This is the name.").responds_with
+        end.responds_with
       end
 
       it { subject.status_code 200 }
