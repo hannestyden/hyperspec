@@ -56,14 +56,30 @@ describe HyperSpec do
       it { subject.headers.must_equal({}) }
     end
 
+    describe "nested resource" do
+      # `resource` is added to `Kernel`, but conveniently enough
+      # returns a sub class of MiniTest::Spec which can be tested,
+      # though this time we must tap into the `service` and bind it.
+      subject do
+        the_spec do |bound|
+          service("http://lolc.at") do
+            resource("/lolz") do
+              bound.value = resource("catz") {}
+            end
+          end
+        end
+      end
+
+      it { subject.base_uri.must_equal URI.parse("http://lolc.at/lolz/catz") }
+    end
+
     describe "with_headers" do
       subject do
         the_spec do |bound|
           service("http://localhost") do
-            bound.value =
-              resource("/lolz") do
-                with_headers({ 'X-Camel-Size' => 'LARGE' })
-              end
+            resource("/lolz") do
+              bound.value = with_headers({ 'X-Camel-Size' => 'LARGE' }) {}
+            end
           end
         end
       end
@@ -71,6 +87,36 @@ describe HyperSpec do
       it { subject.must_be_kind_of MiniTest::Spec }
       it { subject.base_uri.must_equal URI.parse("http://localhost/lolz") }
       it { subject.headers.must_equal({ 'X-Camel-Size' => 'LARGE' }) }
+    end
+
+    describe "with_query" do
+      subject do
+        the_spec do |bound|
+          service("http://localhost") do
+            resource("/lolz") do
+              bound.value = with_query("q=monorail") {}
+            end
+          end
+        end
+      end
+
+      it { subject.must_be_kind_of MiniTest::Spec }
+      it { subject.base_uri.query.must_equal "q=monorail" }
+    end
+
+    describe "with_request_body" do
+      subject do
+        the_spec do |bound|
+          service("http://localhost") do
+            resource("/lolz") do
+              bound.value = with_request_body("lol[title]=Roflcopter") {}
+            end
+          end
+        end
+      end
+
+      it { subject.must_be_kind_of MiniTest::Spec }
+      it { subject.request_body.must_equal "lol[title]=Roflcopter" }
     end
 
     %w[ get head post put delete ].map(&:to_sym).each do |http_method|

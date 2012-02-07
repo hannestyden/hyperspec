@@ -1,6 +1,9 @@
 require 'uri'
 require 'net/http'
 
+gem 'minitest' # Ensure gem is used over built in.
+require 'minitest/spec'
+
 require 'hyperspec/version'
 
 module HyperSpec
@@ -10,18 +13,42 @@ module HyperSpec
       cls = describe(desc, additional_desc, &block)
       cls.send(:define_method, :base_uri) { URI.parse(desc) }
       cls.send(:define_method, :headers)  { {} }
+      cls.send(:define_method, :request_body)  { "" }
       cls
     end
 
-    def resource(desc, additional_desc = nil, &block)
+    def resource(path, additional_desc = nil, &block)
       cls = describe(desc, additional_desc, &block)
-      cls.send(:define_method, :base_uri) { super().merge(URI.parse(desc)) }
+
+      cls.send(:define_method, :base_uri) do
+        s = super()
+        s.path = [ s.path, path ].reject(&:empty?).join("/")
+        s
+      end
       cls
     end
 
-    def with_headers(hash)
-      cls = ::MiniTest::Spec.describe_stack.last
+    def with_headers(hash, additional_desc = nil, &block)
+      cls = describe("with headers", additional_desc, &block)
       cls.send(:define_method, :headers) { super().merge(hash) }
+      cls
+    end
+
+    def with_query(string, additional_desc = nil, &block)
+      cls = describe("with query", additional_desc, &block)
+      cls.send(:define_method, :base_uri) do
+        s = super()
+        s.query = [ s.query.to_s, string ].reject(&:empty?).join("&")
+        s
+      end
+      cls
+    end
+
+    def with_request_body(string, additional_desc = nil, &block)
+      cls = describe("with request body", additional_desc, &block)
+      cls.send(:define_method, :request_body) do
+        string
+      end
       cls
     end
 
@@ -73,7 +100,7 @@ module HyperSpec
       def do_request
         klass = eval("Net::HTTP::#{request_type.to_s.gsub(/^\w/) { |c| c.upcase }}")
         @do_request ||=
-          request_response(klass, base_uri, headers)
+          request_response(klass, base_uri, headers, request_body)
       end
 
       def request_response(klass, uri, headers, body = '')
@@ -86,8 +113,13 @@ module HyperSpec
 
         resp =
           http.start do
-            req = klass.new(uri.path, headers)
+            request_uri = [ uri.path, uri.query ].join("?")
+            req = klass.new(request_uri)
+            headers.inject(req) { |m, (k, v)| m[k] = v; m }
             req.body = body if body
+            if headers['Content-Type']
+              req.content_type = headers['Content-Type']
+            end
             http.request(req)
           end
         Response.from_net_http_response(resp)
