@@ -16,6 +16,8 @@ VCR.config do |c|
 end
 
 describe HyperSpec do
+  use_vcr_cassette('localhost')
+
   it "should be of version 0.0.0" do
     HyperSpec::VERSION.must_equal "0.0.0"
   end
@@ -90,15 +92,75 @@ describe HyperSpec do
         end
 
         it { subject.request_type.must_equal http_method }
+      end
+    end
 
-        describe "mock requests" do
-          use_vcr_cassette('localhost')
+    describe "response" do
+      subject do
+        this = nil
 
+        service("http://localhost") do
+          resource("/") do
+            this = get {}
+          end
+        end
+
+        this.new("This is the name.").response
+      end
+
+      it { subject.status_code.must_be_kind_of Integer }
+      it { subject.headers.must_be_kind_of Hash }
+      it { subject.body.must_be_kind_of String }
+
+      it { subject.content_type.must_be_kind_of String }
+      it { subject.status.must_be_kind_of Symbol }
+
+      describe "status" do
+        {
+          200 => :ok,
+          201 => :created,
+          401 => :unauthorized,
+          411 => :length_required,
+          422 => :unprocessable_entity,
+        }.each do |code, status|
           it do
-            subject.response.status_code.must_equal 200
+            subject.status_code = code
+            subject.status.must_equal status
           end
         end
       end
+
+      describe "content_charset" do
+        it { subject.content_charset.must_be_kind_of String }
+        it do
+          subject.headers['Content-Type'] = "application/xml"
+          subject.content_charset.must_be_nil
+        end
+      end
+
+      describe "header access" do
+        it "must be case insensitive" do
+          subject.headers['Content-Length'].must_equal \
+            subject.headers['content-length']
+        end
+      end
+    end
+
+    describe "responds_with" do
+      subject do
+        this = nil
+
+        service("http://localhost") do
+          resource("/") do
+            this = get {}
+          end
+        end
+
+        this.new("This is the name.").responds_with
+      end
+
+      it { subject.status_code 200 }
+      it { subject.status :ok }
     end
   end
 end

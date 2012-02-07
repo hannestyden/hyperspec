@@ -65,44 +65,56 @@ module HyperSpec
         self.class.request_type
       end
 
+      def responds_with
+        Have.new(response)
+      end
+
       private
       def do_request
         klass = eval("Net::HTTP::#{request_type.to_s.gsub(/^\w/) { |c| c.upcase }}")
         @do_request ||=
-          Request.new(klass, base_uri, headers).response
+          request_response(klass, base_uri, headers)
+      end
+
+      def request_response(klass, uri, headers, body = '')
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = URI::HTTPS === uri
+
+        # NO DON'T DO IT!
+        # http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        # YOU DIDN'T DO IT, DID YOU?
+
+        resp =
+          http.start do
+            req = klass.new(uri.path, headers)
+            req.body = body if body
+            http.request(req)
+          end
+        Response.from_net_http_response(resp)
       end
     end
   end
 
-  Request = Struct.new(:klass, :uri, :headers, :body) do
-    def response
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = URI::HTTPS === uri
-
-      # NO DON'T DO IT!
-      # http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      # YOU DIDN'T DO IT, DID YOU?
-
-      resp =
-        http.start do
-          req = klass.new(uri.path, headers)
-          req.body = body if body
-          http.request(req)
-        end
-      Response.from_net_http_response(resp)
-    end
-  end
-
   Response = Struct.new(:status_code, :headers, :body) do
+    STATI = {
+      # 2xx
+      200 => :ok,
+      201 => :created,
+
+      # 4xx
+      401 => :unauthorized,
+      411 => :length_required,
+
+      # WebDav extensions
+      422 => :unprocessable_entity,
+    }
+
     def self.from_net_http_response(http)
       status_code = http.code.to_i
       body        = http.body
 
       headers =
-        http.to_hash.inject({}) do |m, (k, v)|
-          k = k.gsub(/^\w|-\w/) { |c| c.upcase }
-          m.update(k => v.first)
-        end
+        CaseInsensitiveHash.from_hash(http.to_hash)
 
       new(status_code, headers, body)
     end
@@ -112,14 +124,38 @@ module HyperSpec
     end
 
     def content_charset
-      headers['Content-Type'].split(';').last.gsub(/\s*charset=/, '')
+      (md = headers['Content-Type'].match(/;charset=(.*)/)) && md[1]
     end
 
-    def responds_with
-      Have.new(self)
+    def status
+      STATI[status_code]
+    end
+  end
+
+  class CaseInsensitiveHash < Hash
+    def self.from_hash(hash)
+      hash.inject(new) do |m, (k, v)|
+        m[k] = v.first
+        m
+      end
+    end
+
+    def []=(key, value)
+      super(key.downcase, value)
+    end
+
+    def [](key)
+      super(key.downcase)
+    end
+  end
+
+  Have = Struct.new(:proxy) do
+    def method_missing(method_name, *arguments, &block)
+      proxy.send(method_name).must_equal(*arguments)
     end
   end
 end
+
 
 ::Object.send(:include, HyperSpec::ObjectExtensions)
 ::MiniTest::Spec.send(:include, HyperSpec::MiniTest::SpecExtensions)
