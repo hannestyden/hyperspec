@@ -14,33 +14,37 @@ HTTP APIs from the outside.
 
 ## Example
 
-    service "http://api.lolcat.biz" do
+    service "http://localhost:4567" do
+      def response_json
+        JSON.parse(response.body)
+      end
+
       resource "/lolz" do
         get do
           it { responds_with.status :ok }
-          it { response.json['lolz].must be_an(Array) }
+          it { response_json['lolz'].must_be_instance_of Array }
 
           with_query("q=monorail") do
             it "only lists lolz that match the query" do
-              response.json['lolz'].each do |lol|
-                lol['title'].must =~ /monorail/
+              response_json['lolz'].wont_be_empty
+              response_json['lolz'].each do |lol|
+                lol['title'].must_match /monorail/
               end
             end
           end
         end
 
         post do
-          context "without request body" do
+          describe "without request body" do
             it { responds_with.status :unprocessable_entity }
           end
 
-          context "with request body" do
-            context "in JSON format" do
-              with_headers      { 'Content-Type' => 'application/json' }
-              with_request_body { "title" => "Roflcopter!" }.to_json
-
-              it { responds_with.status :created }
-              it { response.json['lol']['title'].must == 'Roflcopter!' }
+          describe "with request body" do
+            with_headers({ 'Content-Type' => 'application/json' }) do
+              with_request_body({ "title" => "Roflcopter!" }.to_json) do
+                it { responds_with.status :created }
+                it { response_json['lol']['title'].must_equal 'Roflcopter!' }
+              end
             end
           end
         end
