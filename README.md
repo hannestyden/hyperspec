@@ -110,7 +110,10 @@ Allows for comparing against named status code symbols.
 
 ## Acknowledgments
 
-Thanks to Daniel Bornkessel for inspiring me to do README driven development.
+Thanks to:
+
+- [Daniel Bornkessel](https://github.com/kesselborn) for inspiring me to do `README` driven development.
+- [Matthias Georgi](https://github.com/georgi) for suggestions for code improvements.
 
 ## History
 
