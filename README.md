@@ -98,6 +98,10 @@ Allows for comparing against named status code symbols.
 
 - DSL for matching representations.
 
+### Documentation
+
+- Adding an output format for docs.
+
 ## Concerns
 
 - Efficient ways of building up and verifying precondition state.
