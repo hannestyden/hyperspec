@@ -54,31 +54,18 @@ module HyperSpec
 
     # HTTP method selection
     #
-    def get(additional_desc = nil, &block)
-      cls = describe('GET', additional_desc, &block)
-      cls.instance_eval { |_| def request_type; :get; end }
-      cls
-    end
-
-    def head(additional_desc = nil, &block)
-      cls = describe('HEAD', additional_desc, &block)
-      cls.instance_eval { |_| def request_type; :head; end }
-      cls
-    end
-    def post(additional_desc = nil, &block)
-      cls = describe('POST', additional_desc, &block)
-      cls.instance_eval { |_| def request_type; :post; end }
-      cls
-    end
-    def put(additional_desc = nil, &block)
-      cls = describe('PUT', additional_desc, &block)
-      cls.instance_eval { |_| def request_type; :put; end }
-      cls
-    end
-    def delete(additional_desc = nil, &block)
-      cls = describe('DELETE', additional_desc, &block)
-      cls.instance_eval { |_| def request_type; :delete; end }
-      cls
+    {
+      'get'    => Net::HTTP::Get,
+      'head'   => Net::HTTP::Head,
+      'post'   => Net::HTTP::Post,
+      'put'    => Net::HTTP::Put,
+      'delete' => Net::HTTP::Delete,
+    }.each do |http_method, request_class|
+      define_method(http_method) do |additional_desc = nil, &block|
+        cls = describe(http_method.upcase, additional_desc, &block)
+        cls.send(:define_method, :request_class) { request_class }
+        cls
+      end
     end
   end
 
@@ -88,19 +75,14 @@ module HyperSpec
         do_request
       end
 
-      def request_type
-        self.class.request_type
-      end
-
       def responds_with
         Have.new(response)
       end
 
       private
       def do_request
-        klass = eval("Net::HTTP::#{request_type.to_s.gsub(/^\w/) { |c| c.upcase }}")
         @do_request ||=
-          request_response(klass, base_uri, headers, request_body)
+          request_response(request_class, base_uri, headers, request_body)
       end
 
       def request_response(klass, uri, headers, body = '')

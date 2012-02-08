@@ -119,7 +119,13 @@ describe HyperSpec do
       it { subject.request_body.must_equal "lol[title]=Roflcopter" }
     end
 
-    %w[ get head post put delete ].map(&:to_sym).each do |http_method|
+    {
+      'get'    => Net::HTTP::Get,
+      'head'   => Net::HTTP::Head,
+      'post'   => Net::HTTP::Post,
+      'put'    => Net::HTTP::Put,
+      'delete' => Net::HTTP::Delete,
+    }.each do |http_method, request_class|
       describe "HTTP method selection" do
         subject do
           the_spec do |bound|
@@ -131,7 +137,7 @@ describe HyperSpec do
           end
         end
 
-        it { subject.request_type.must_equal http_method }
+        it { subject.request_class.must_equal request_class }
       end
     end
 
