@@ -10,46 +10,53 @@ module HyperSpec
   module ObjectExtensions
     private
     def service(desc, additional_desc = nil, &block)
-      cls = describe(desc, additional_desc, &block)
-      cls.send(:define_method, :base_uri) { URI.parse(desc) }
-      cls.send(:define_method, :headers)  { {} }
-      cls.send(:define_method, :request_body)  { "" }
-      cls
+      describe(desc, additional_desc, &block).tap do |cls|
+        cls.class_eval do
+          define_method(:base_uri)     { URI.parse(desc) }
+          define_method(:headers)      { {} }
+          define_method(:request_body) { "" }
+        end
+      end
     end
 
     def resource(path, additional_desc = nil, &block)
-      cls = describe(desc, additional_desc, &block)
-
-      cls.send(:define_method, :base_uri) do
-        s = super()
-        s.path = [ s.path, path ].reject(&:empty?).join("/")
-        s
+      describe(desc, additional_desc, &block).tap do |cls|
+        cls.class_eval do
+          define_method(:base_uri) do
+            super().tap do |s|
+              s.path = [ s.path, path ].reject(&:empty?).join("/")
+            end
+          end
+        end
       end
-      cls
     end
 
     def with_headers(hash, additional_desc = nil, &block)
-      cls = describe("with headers", additional_desc, &block)
-      cls.send(:define_method, :headers) { super().merge(hash) }
-      cls
+      describe("with headers", additional_desc, &block).tap do |cls|
+        cls.class_eval do
+          define_method(:headers) { super().merge(hash) }
+        end
+      end
     end
 
     def with_query(string, additional_desc = nil, &block)
-      cls = describe("with query", additional_desc, &block)
-      cls.send(:define_method, :base_uri) do
-        s = super()
-        s.query = [ s.query.to_s, string ].reject(&:empty?).join("&")
-        s
+      describe("with query", additional_desc, &block).tap do |cls|
+        cls.class_eval do
+          define_method(:base_uri) do
+            super().tap do |s|
+              s.query = [ s.query.to_s, string ].reject(&:empty?).join("&")
+            end
+          end
+        end
       end
-      cls
     end
 
     def with_request_body(string, additional_desc = nil, &block)
-      cls = describe("with request body", additional_desc, &block)
-      cls.send(:define_method, :request_body) do
-        string
+      describe("with request body", additional_desc, &block).tap do |cls|
+        cls.class_eval do
+          define_method(:request_body) { string }
+        end
       end
-      cls
     end
 
     # HTTP method selection
@@ -62,9 +69,11 @@ module HyperSpec
       'delete' => Net::HTTP::Delete,
     }.each do |http_method, request_class|
       define_method(http_method) do |additional_desc = nil, &block|
-        cls = describe(http_method.upcase, additional_desc, &block)
-        cls.send(:define_method, :request_class) { request_class }
-        cls
+        describe(http_method.upcase, additional_desc, &block).tap do |cls|
+          cls.class_eval do
+            define_method(:request_class) { request_class }
+          end
+        end
       end
     end
   end
@@ -104,6 +113,7 @@ module HyperSpec
             end
             http.request(req)
           end
+
         Response.from_net_http_response(resp)
       end
     end
@@ -169,7 +179,6 @@ module HyperSpec
     end
   end
 end
-
 
 ::Object.send(:include, HyperSpec::ObjectExtensions)
 ::MiniTest::Spec.send(:include, HyperSpec::MiniTest::SpecExtensions)
