@@ -204,5 +204,19 @@ describe HyperSpec do
       it { subject.status_code 200 }
       it { subject.status :ok }
     end
+
+    describe "basic auth" do
+      subject do
+        the_spec do |bound|
+          service("http://username:password@localhost") do
+            resource("/secret") do
+              bound.value = get {}
+            end
+          end
+        end.response
+      end
+
+      it { subject.status_code.must_equal 200 }
+    end
   end
 end
