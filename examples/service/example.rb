@@ -18,6 +18,6 @@ post "/lolz" do
       %^{"lol": {"title": "Roflcopter!"}}^
     end
   else
-    status 422
+    status 415
   end
 end
