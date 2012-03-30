@@ -108,6 +108,7 @@ module HyperSpec
             req = klass.new(request_uri)
             headers.inject(req) { |m, (k, v)| m[k] = v; m }
             req.body = body if body
+            req.basic_auth(uri.user, uri.password) if uri.userinfo
             if headers['Content-Type']
               req.content_type = headers['Content-Type']
             end
