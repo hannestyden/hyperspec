@@ -115,11 +115,20 @@ Thanks to:
 
 - [Daniel Bornkessel](https://github.com/kesselborn) for inspiring me to do `README` driven development.
 - [Matthias Georgi](https://github.com/georgi) for suggestions for code improvements.
+- [Lars Gierth](https://github.com/lgierth) for updating the example server to respond with 415 Unsupported Media Type in the appropriate case.
+- [Anton Lindqvist](https://github.com/mptre) for adding HTTP Basic Auth
 
 ## History
 
-### 2012 02 07
+### 0.0.2
 
-#### 0.0.1
+#### 2012 03 30
+
+- Correcting environment dependencies.
+- Adding support for HTTP Basic Auth.
+
+### 0.0.1
+
+#### 2012 02 07
 
 - Initial release
