@@ -206,17 +206,33 @@ describe HyperSpec do
     end
 
     describe "basic auth" do
-      subject do
-        the_spec do |bound|
-          service("http://username:password@localhost") do
-            resource("/secret") do
-              bound.value = get {}
+      describe "with username" do
+        subject do
+          the_spec do |bound|
+            service("http://username@localhost") do
+              resource("/secret") do
+                bound.value = get {}
+              end
             end
-          end
-        end.response
+          end.response
+        end
+
+        it { subject.status_code.must_equal 200 }
       end
 
-      it { subject.status_code.must_equal 200 }
+      describe "with username and password" do
+        subject do
+          the_spec do |bound|
+            service("http://username:password@localhost") do
+              resource("/secret") do
+                bound.value = get {}
+              end
+            end
+          end.response
+        end
+
+        it { subject.status_code.must_equal 200 }
+      end
     end
   end
 end

@@ -95,6 +95,27 @@
 - !ruby/struct:VCR::HTTPInteraction
   request: !ruby/struct:VCR::Request
     method: :get
+    uri: http://username@localhost:80/secret
+    headers:
+      authorization:
+      - Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+    body:
+  response: !ruby/struct:VCR::Response
+    http_version: "1.1"
+    status: !ruby/struct:VCR::ResponseStatus
+      code: 200
+      message: OK
+    headers:
+      content-length:
+      - "24"
+      content-type:
+      - application/json;charset=utf-8
+    body: |+
+      {"is-this-secret":true}
+
+- !ruby/struct:VCR::HTTPInteraction
+  request: !ruby/struct:VCR::Request
+    method: :get
     uri: http://username:password@localhost:80/secret
     headers:
       authorization:
