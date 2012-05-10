@@ -10,6 +10,8 @@ A full stack testing framework for HTTP APIs.
 By extending `minitest/spec` HyperSpec provides a Ruby DSL for testing
 HTTP APIs from the outside.
 
+[![Build Status](https://secure.travis-ci.org/hannestyden/hyperspec.png)](http://travis-ci.org/hannestyden/hyperspec)
+
 ## Example
 
 ```ruby
