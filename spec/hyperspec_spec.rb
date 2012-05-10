@@ -1,6 +1,8 @@
 require 'uri'
 
-gem 'minitest' # Ensure gem is used over built in.
+# Ensure gem is used over 1.9.x built in.
+gem 'minitest' if RUBY_VERSION =~ /1.9.\d/
+
 require 'minitest/spec'
 require 'minitest/autorun'
 
