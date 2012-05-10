@@ -61,18 +61,32 @@ module HyperSpec
 
     # HTTP method selection
     #
-    {
-      'get'    => Net::HTTP::Get,
-      'head'   => Net::HTTP::Head,
-      'post'   => Net::HTTP::Post,
-      'put'    => Net::HTTP::Put,
-      'delete' => Net::HTTP::Delete,
-    }.each do |http_method, request_class|
-      define_method(http_method) do |additional_desc = nil, &block|
-        describe(http_method.upcase, additional_desc, &block).tap do |cls|
-          cls.class_eval do
-            define_method(:request_class) { request_class }
-          end
+    # Hard coded method definitions is required for 1.8.7 compatibility.
+    def get(additional_desc = nil, &block)
+      _request('get', Net::HTTP::Get, additional_desc, &block)
+    end
+
+    def head(additional_desc = nil, &block)
+      _request('head', Net::HTTP::Head, additional_desc, &block)
+    end
+
+    def post(additional_desc = nil, &block)
+      _request('post', Net::HTTP::Post, additional_desc, &block)
+    end
+
+    def put(additional_desc = nil, &block)
+      _request('put', Net::HTTP::Put, additional_desc, &block)
+    end
+
+    def delete(additional_desc = nil, &block)
+      _request('delete', Net::HTTP::Delete, additional_desc, &block)
+    end
+
+    private
+    def _request(http_method, request_class, additional_desc, &block)
+      describe(http_method.upcase, additional_desc, &block).tap do |cls|
+        cls.class_eval do
+          define_method(:request_class) { request_class }
         end
       end
     end
