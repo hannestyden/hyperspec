@@ -1,6 +1,7 @@
 require 'uri'
 
-gem 'minitest' # Ensure gem is used over built in.
+# Uncomment to ensure gem is used over built in.
+# gem 'minitest'
 require 'minitest/spec'
 require 'minitest/autorun'
 

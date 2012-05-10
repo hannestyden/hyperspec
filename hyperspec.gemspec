@@ -40,10 +40,10 @@ Gem::Specification.new do |s|
   runtime_dependencies = []
 
   (dependencies + developement_dependencies).each do |dependency|
-    s.add_development_dependency *dependency
+    s.add_development_dependency(*dependency)
   end
 
   (dependencies + runtime_dependencies).each do |dependency|
-    s.add_runtime_dependency *dependency
+    s.add_runtime_dependency(*dependency)
   end
 end
