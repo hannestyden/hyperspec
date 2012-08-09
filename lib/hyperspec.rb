@@ -99,7 +99,7 @@ module HyperSpec
       end
 
       def responds_with
-        Have.new(response)
+        RespondsWith.new(response)
       end
 
       private
@@ -133,6 +133,8 @@ module HyperSpec
       end
     end
   end
+
+  class UnkownStatusCodeError < StandardError; end
 
   Response = Struct.new(:status_code, :headers, :body) do
     STATI = {
@@ -248,6 +250,17 @@ module HyperSpec
   Have = Struct.new(:proxy) do
     def method_missing(method_name, *arguments, &block)
       proxy.send(method_name).must_equal(*arguments)
+    end
+  end
+
+  class RespondsWith < Have
+    def status(status_code_symbol)
+      if STATI.has_value?(status_code_symbol)
+        proxy.status.must_equal(status_code_symbol)
+      else
+        raise UnkownStatusCodeError,
+          "Status code #{status_code_symbol.inspect} is unkown."
+      end
     end
   end
 end

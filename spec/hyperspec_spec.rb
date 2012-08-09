@@ -267,6 +267,12 @@ describe HyperSpec do
 
       it { subject.status_code 200 }
       it { subject.status :ok }
+
+      it do
+        lambda do
+          subject.status :this_is_not_known
+        end.must_raise HyperSpec::UnkownStatusCodeError
+      end
     end
 
     describe "basic auth" do
