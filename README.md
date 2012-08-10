@@ -122,6 +122,12 @@ Thanks to:
 
 ## History
 
+### 0.0.3
+
+#### 2012 08 10
+
+- Add complete list of HTTP response codes.
+
 ### 0.0.2
 
 #### 2012 03 30
