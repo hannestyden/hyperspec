@@ -67,9 +67,9 @@ Sets the `URI` under test. Absolute or relative to the current scope.
 
 Selects the HTTP method for the request.
 
-### `with_query_string`
+### `with_query`
 
-Sets the query parameters used for a request. Merges with previously set parameters.
+Sets the query parameters (as a string) used for a request. Appends to previously set parameters.
 
 ### `with_headers`
 
