@@ -14,7 +14,9 @@ HTTP APIs from the outside.
 
 ## Example
 
-```ruby #source: examples/readme/service_spec.rb
+```ruby
+#source: examples/readme/service_spec.rb
+
 service "http://localhost:4567" do
   def responds_with_json_where
     JSON.parse(response.body)
