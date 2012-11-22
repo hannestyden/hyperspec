@@ -76,17 +76,17 @@ Sets the `URI` under test. Absolute or relative to the current scope.
 
 Selects the HTTP method for the request.
 
-### `with_query_string`
+### `with_query`
 
-Sets the query parameters used for a request. Merges with previously set parameters.
+Sets the query component of a request. Overrides previously set parameters.
 
 ### `with_headers`
 
-Sets the headers used for a request. Merges with previously set headers.
+Sets the headers of a request. Merges with previously set headers.
 
 ### `with_body`
 
-Sets the body used for a request. Overrides previously set parameters.
+Sets the body of a request. Overrides previously set parameters.
 
 ### `response`
 
@@ -128,8 +128,15 @@ Thanks to:
 - [Matthias Georgi](https://github.com/georgi) for suggestions for code improvements.
 - [Lars Gierth](https://github.com/lgierth) for updating the example server to respond with 415 Unsupported Media Type in the appropriate case.
 - [Anton Lindqvist](https://github.com/mptre) for adding HTTP Basic Auth
+- [Josh Devins](https://github.com/joshdevins) for noticing missing HTTP status codes and `with_query` documentation inconsistency.
 
 ## History
+
+### 0.0.4
+
+#### 2012 11 22
+
+- Change behavior of `with_query` to override instead of append.
 
 ### 0.0.3
 

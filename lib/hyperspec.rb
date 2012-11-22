@@ -44,7 +44,7 @@ module HyperSpec
         cls.class_eval do
           define_method(:base_uri) do
             super().tap do |s|
-              s.query = [ s.query.to_s, string ].reject(&:empty?).join("&")
+              s.query = string
             end
           end
         end

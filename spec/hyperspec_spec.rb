@@ -23,8 +23,8 @@ describe HyperSpec do
 
   use_vcr_cassette('localhost')
 
-  it "should be of version 0.0.3" do
-    HyperSpec::VERSION.must_equal "0.0.3"
+  it "should be of version 0.0.4" do
+    HyperSpec::VERSION.must_equal "0.0.4"
   end
 
   describe "MiniTest::Spec extensions" do
@@ -104,6 +104,24 @@ describe HyperSpec do
 
       it { subject.must_be_kind_of MiniTest::Spec }
       it { subject.base_uri.query.must_equal "q=monorail" }
+    end
+
+    describe "nested with_query" do
+      subject do
+        the_spec do |bound|
+          service("http://localhost") do
+            resource("/lolz") do
+              with_query("q=monorail") do
+                bound.value = with_query("q=lolz") {}
+              end
+            end
+          end
+        end
+      end
+
+      it 'should override previously set query values' do
+        subject.base_uri.query.must_equal "q=lolz"
+      end
     end
 
     describe "with_request_body" do
