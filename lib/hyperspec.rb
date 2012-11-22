@@ -20,7 +20,7 @@ module HyperSpec
     end
 
     def resource(path, additional_desc = nil, &block)
-      describe(desc, additional_desc, &block).tap do |cls|
+      describe(path, additional_desc, &block).tap do |cls|
         cls.class_eval do
           define_method(:base_uri) do
             super().tap do |s|
