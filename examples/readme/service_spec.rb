@@ -3,7 +3,12 @@ require 'minitest/autorun'
 
 require 'json'
 
-# Run `shotgun -p 4567 example.ru` from `examples/service/`.
+# Shell 1:
+# `cd examples/readme`
+# Start service: `rackup -p 4567 example.ru`.
+#
+# Shell 2:
+# Run specs: `be ruby -rubygems examples/readme/service_spec.rb`.
 
 service "http://localhost:4567" do
   def response_json

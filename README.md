@@ -33,6 +33,15 @@ service "http://localhost:4567" do
           end
         end
       end
+
+      with_query("q=looong") do
+        it "only lists lolz that match the query" do
+          response_json['lolz'].wont_be_empty
+          response_json['lolz'].each do |lol|
+            lol['title'].must_match /looong/
+          end
+        end
+      end
     end
 
     post do
