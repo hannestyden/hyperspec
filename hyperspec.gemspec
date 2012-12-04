@@ -37,13 +37,11 @@ Gem::Specification.new do |s|
       [ "fakeweb" ],
     ]
 
-  runtime_dependencies = []
-
-  (dependencies + developement_dependencies).each do |dependency|
-    s.add_development_dependency(*dependency)
+  dependencies.each do |dependency|
+    s.add_dependency(*dependency)
   end
 
-  (dependencies + runtime_dependencies).each do |dependency|
-    s.add_runtime_dependency(*dependency)
+  developement_dependencies.each do |dependency|
+    s.add_development_dependency(*dependency)
   end
 end

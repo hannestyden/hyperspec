@@ -23,8 +23,8 @@ describe HyperSpec do
 
   use_vcr_cassette('localhost')
 
-  it "should be of version 0.0.4" do
-    HyperSpec::VERSION.must_equal "0.0.4"
+  it "should be of version 0.0.5" do
+    HyperSpec::VERSION.must_equal "0.0.5"
   end
 
   describe "MiniTest::Spec extensions" do
