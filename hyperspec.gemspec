@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.name     = "hyperspec"
   s.version  = HyperSpec::VERSION
   s.authors  = [ "Hannes Tydén" ]
-  s.email    = [ "hannes@soundcloud.com" ]
+  s.email    = [ "hannes@tyden.name" ]
   s.homepage = "http://github.com/hannestyden/hyperspec"
   s.summary  = "Full stack HTTP API testing DSL."
 

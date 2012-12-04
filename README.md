@@ -148,27 +148,23 @@ Thanks to:
 
 ## History
 
-### 0.0.4
+### 0.0.5 - 2012-12-04
 
-#### 2012 11 22
+- Change dependency declaration.
+
+### 0.0.4 - 2012-11-22
 
 - Change behavior of `with_query` to override instead of append.
 
-### 0.0.3
-
-#### 2012 08 10
+### 0.0.3 - 2012-08-10
 
 - Add complete list of HTTP response codes.
 
-### 0.0.2
-
-#### 2012 03 30
+### 0.0.2 - 2012-03-30
 
 - Correcting environment dependencies.
 - Adding support for HTTP Basic Auth.
 
-### 0.0.1
-
-#### 2012 02 07
+### 0.0.1 - 2012-02-07
 
 - Initial release
