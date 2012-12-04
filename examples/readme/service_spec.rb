@@ -3,14 +3,24 @@ require 'minitest/autorun'
 
 require 'json'
 
-# Shell 1:
-# `cd examples/readme`
-# Start service: `rackup -p 4567 example.ru`.
-#
-# Shell 2:
-# Run specs: `be ruby -rubygems examples/readme/service_spec.rb`.
+# Run specs: `cd examples/readme; bundle exec ruby -rubygems service_spec.rb`.
 
 service "http://localhost:4567" do
+  # TODO
+  #   It should be possible to set this up **once** per test suite.
+  #   MiniTest::Spec seems to lack support for this though.
+  before do
+    @service_pid =
+      Process.spawn('bundle exec rackup -p 4567 service.ru', {
+        :err => '/dev/null'
+      })
+    sleep 3
+  end
+
+  after do
+    Process.kill('KILL', @service_pid)
+  end
+
   def responds_with_json_where
     JSON.parse(response.body)
   end
