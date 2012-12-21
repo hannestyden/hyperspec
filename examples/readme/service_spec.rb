@@ -5,20 +5,52 @@ require 'json'
 
 # Run specs: `cd examples/readme; bundle exec ruby -rubygems service_spec.rb`.
 
-service "http://localhost:4567" do
-  # TODO
-  #   It should be possible to set this up **once** per test suite.
-  #   MiniTest::Spec seems to lack support for this though.
-  before do
-    @service_pid =
-      Process.spawn('bundle exec rackup -p 4567 service.ru', {
-        :err => '/dev/null'
-      })
-    sleep 3
+# `before(:all)`-like behavior can be implemented with conditional assignment.
+#
+# But ...
+# `after(:all)`-like behavior requires knowledge about when the last example has
+# been run. This is available in `MiniTest::Unit.after_tests` and needs to be
+# made accessible in `MiniTest::Spec`.
+class MiniTest::Spec < MiniTest::Unit::TestCase
+  def self.after(type = :each, &block)
+    case type
+    when :each
+      add_teardown_hook {|tc| tc.instance_eval(&block) }
+    when :all
+      MiniTest::Unit.after_tests { |tc| tc.instance_eval(&block) }
+    else
+      raise "unsupported after type: #{type}"
+    end
+  end
+end
+
+module ServiceRunner
+  def self.start
+    command = 'bundle exec rackup service.ru -p 4567'
+    @service_pid ||=
+      begin
+        pid = Process.spawn(command, { :err => '/dev/null' })
+        # Here be monsters: Only tested on Darwin.
+        while (bound = `lsof -i :4567`).empty? do
+          sleep 0.1
+        end
+        pid
+      end
   end
 
-  after do
+  def self.stop
     Process.kill('KILL', @service_pid)
+    @service_pid = nil
+  end
+end
+
+service "http://localhost:4567" do
+  before do
+    ServiceRunner.start
+  end
+
+  after(:all) do
+    ServiceRunner.stop
   end
 
   def responds_with_json_where
