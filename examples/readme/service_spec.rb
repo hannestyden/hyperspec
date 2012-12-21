@@ -40,7 +40,7 @@ module ServiceRunner
 
   def self.stop
     Process.kill('KILL', @service_pid)
-    @service_pid = nil
+    remove_instance_variable('@service_pid')
   end
 end
 
