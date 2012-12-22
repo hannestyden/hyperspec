@@ -11,6 +11,7 @@ By extending `minitest/spec` HyperSpec provides a Ruby DSL for testing
 HTTP APIs from the outside.
 
 [![Build Status](https://secure.travis-ci.org/hannestyden/hyperspec.png)](http://travis-ci.org/hannestyden/hyperspec)
+[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/hannestyden/hyperspec)
 
 ## Example
 
