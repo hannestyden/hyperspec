@@ -26,22 +26,8 @@ Gem::Specification.new do |s|
 
   s.require_paths = [ "lib" ]
 
-  dependencies =
-    [
-      [ "minitest", "~> 2.11" ],
-    ]
+  s.add_dependency("minitest", "~> 2.11")
 
-  developement_dependencies =
-    [
-      [ "vcr", "~> 1.6" ],
-      [ "fakeweb" ],
-    ]
-
-  dependencies.each do |dependency|
-    s.add_dependency(*dependency)
-  end
-
-  developement_dependencies.each do |dependency|
-    s.add_development_dependency(*dependency)
-  end
+  s.add_development_dependency("vcr", "~> 1.6")
+  s.add_development_dependency("fakeweb")
 end
