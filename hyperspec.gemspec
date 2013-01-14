@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
 
   s.require_paths = [ 'lib' ]
 
-  s.add_dependency('minitest', '~> 2.11')
+  s.add_dependency('minitest', '~> 4.4')
 
   s.add_development_dependency('vcr', '~> 1.6')
   s.add_development_dependency('fakeweb')
